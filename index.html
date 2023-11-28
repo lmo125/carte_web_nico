@@ -1,0 +1,1351 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>Cartographie du Parc National des Pyrénées</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/Zoneoptimaledadhsion_2.js"></script>
+        <script src="data/ZonedahsionduParcNational_3.js"></script>
+        <script src="data/ZonecoeurduParcNational_4.js"></script>
+        <script src="data/Principauxsentiersderandonnes_5.js"></script>
+        <script src="data/SecteursduParcNational_6.js"></script>
+        <script src="data/PlansdeauduParc_7.js"></script>
+        <script src="data/Refuges_8.js"></script>
+        <script src="data/MaisonsduParcNationalaccueilpublic_9.js"></script>
+        <script src="data/LimitesduParcNationaltouteszonesconfodues_10.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[42.55306195415035,-0.7849935747140588],[43.20346483552074,0.4378072439951705]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OpenStreetMap_0');
+        map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+        var layer_OpenStreetMap_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OpenStreetMap_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OpenStreetMap_0;
+        map.addLayer(layer_OpenStreetMap_0);
+        map.createPane('pane_FonddecarteGoogleSatellite_1');
+        map.getPane('pane_FonddecarteGoogleSatellite_1').style.zIndex = 401;
+        var layer_FonddecarteGoogleSatellite_1 = L.tileLayer('http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', {
+            pane: 'pane_FonddecarteGoogleSatellite_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_FonddecarteGoogleSatellite_1;
+        map.addLayer(layer_FonddecarteGoogleSatellite_1);
+        function pop_Zoneoptimaledadhsion_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Libellé'] !== null ? autolinker.link(feature.properties['Libellé'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Zoneoptimaledadhsion_2_0() {
+            return {
+                pane: 'pane_Zoneoptimaledadhsion_2',
+                opacity: 1,
+                color: 'rgba(255,167,90,0.581)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,167,90,0.581)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Zoneoptimaledadhsion_2');
+        map.getPane('pane_Zoneoptimaledadhsion_2').style.zIndex = 402;
+        map.getPane('pane_Zoneoptimaledadhsion_2').style['mix-blend-mode'] = 'normal';
+        var layer_Zoneoptimaledadhsion_2 = new L.geoJson(json_Zoneoptimaledadhsion_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Zoneoptimaledadhsion_2',
+            layerName: 'layer_Zoneoptimaledadhsion_2',
+            pane: 'pane_Zoneoptimaledadhsion_2',
+            onEachFeature: pop_Zoneoptimaledadhsion_2,
+            style: style_Zoneoptimaledadhsion_2_0,
+        });
+        bounds_group.addLayer(layer_Zoneoptimaledadhsion_2);
+        map.addLayer(layer_Zoneoptimaledadhsion_2);
+        function pop_ZonedahsionduParcNational_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_ZonedahsionduParcNational_3_0() {
+            return {
+                pane: 'pane_ZonedahsionduParcNational_3',
+                opacity: 1,
+                color: 'rgba(19,126,58,0.581)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(19,126,58,0.581)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_ZonedahsionduParcNational_3');
+        map.getPane('pane_ZonedahsionduParcNational_3').style.zIndex = 403;
+        map.getPane('pane_ZonedahsionduParcNational_3').style['mix-blend-mode'] = 'normal';
+        var layer_ZonedahsionduParcNational_3 = new L.geoJson(json_ZonedahsionduParcNational_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ZonedahsionduParcNational_3',
+            layerName: 'layer_ZonedahsionduParcNational_3',
+            pane: 'pane_ZonedahsionduParcNational_3',
+            onEachFeature: pop_ZonedahsionduParcNational_3,
+            style: style_ZonedahsionduParcNational_3_0,
+        });
+        bounds_group.addLayer(layer_ZonedahsionduParcNational_3);
+        map.addLayer(layer_ZonedahsionduParcNational_3);
+        function pop_ZonecoeurduParcNational_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_ZonecoeurduParcNational_4_0() {
+            return {
+                pane: 'pane_ZonecoeurduParcNational_4',
+                opacity: 1,
+                color: 'rgba(255,98,106,0.581)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,98,106,0.581)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_ZonecoeurduParcNational_4');
+        map.getPane('pane_ZonecoeurduParcNational_4').style.zIndex = 404;
+        map.getPane('pane_ZonecoeurduParcNational_4').style['mix-blend-mode'] = 'normal';
+        var layer_ZonecoeurduParcNational_4 = new L.geoJson(json_ZonecoeurduParcNational_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ZonecoeurduParcNational_4',
+            layerName: 'layer_ZonecoeurduParcNational_4',
+            pane: 'pane_ZonecoeurduParcNational_4',
+            onEachFeature: pop_ZonecoeurduParcNational_4,
+            style: style_ZonecoeurduParcNational_4_0,
+        });
+        bounds_group.addLayer(layer_ZonecoeurduParcNational_4);
+        map.addLayer(layer_ZonecoeurduParcNational_4);
+        function pop_Principauxsentiersderandonnes_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['IDPNP'] !== null ? autolinker.link(feature.properties['IDPNP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Principauxsentiersderandonnes_5_0() {
+            return {
+                pane: 'pane_Principauxsentiersderandonnes_5',
+                opacity: 1,
+                color: 'rgba(229,225,216,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Principauxsentiersderandonnes_5');
+        map.getPane('pane_Principauxsentiersderandonnes_5').style.zIndex = 405;
+        map.getPane('pane_Principauxsentiersderandonnes_5').style['mix-blend-mode'] = 'normal';
+        var layer_Principauxsentiersderandonnes_5 = new L.geoJson(json_Principauxsentiersderandonnes_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Principauxsentiersderandonnes_5',
+            layerName: 'layer_Principauxsentiersderandonnes_5',
+            pane: 'pane_Principauxsentiersderandonnes_5',
+            onEachFeature: pop_Principauxsentiersderandonnes_5,
+            style: style_Principauxsentiersderandonnes_5_0,
+        });
+        bounds_group.addLayer(layer_Principauxsentiersderandonnes_5);
+        map.addLayer(layer_Principauxsentiersderandonnes_5);
+        function pop_SecteursduParcNational_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Secteur</strong><br />' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_SecteursduParcNational_6_0() {
+            return {
+                pane: 'pane_SecteursduParcNational_6',
+                opacity: 1,
+                color: 'rgba(255,232,119,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,232,119,0.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_SecteursduParcNational_6');
+        map.getPane('pane_SecteursduParcNational_6').style.zIndex = 406;
+        map.getPane('pane_SecteursduParcNational_6').style['mix-blend-mode'] = 'normal';
+        var layer_SecteursduParcNational_6 = new L.geoJson(json_SecteursduParcNational_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_SecteursduParcNational_6',
+            layerName: 'layer_SecteursduParcNational_6',
+            pane: 'pane_SecteursduParcNational_6',
+            onEachFeature: pop_SecteursduParcNational_6,
+            style: style_SecteursduParcNational_6_0,
+        });
+        bounds_group.addLayer(layer_SecteursduParcNational_6);
+        map.addLayer(layer_SecteursduParcNational_6);
+        function pop_PlansdeauduParc_7(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Plan d\'eau</strong><br />' + (feature.properties['TOPONYME'] !== null ? autolinker.link(feature.properties['TOPONYME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PlansdeauduParc_7_0() {
+            return {
+                pane: 'pane_PlansdeauduParc_7',
+                opacity: 1,
+                color: 'rgba(18,184,196,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(18,184,196,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_PlansdeauduParc_7');
+        map.getPane('pane_PlansdeauduParc_7').style.zIndex = 407;
+        map.getPane('pane_PlansdeauduParc_7').style['mix-blend-mode'] = 'normal';
+        var layer_PlansdeauduParc_7 = new L.geoJson(json_PlansdeauduParc_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PlansdeauduParc_7',
+            layerName: 'layer_PlansdeauduParc_7',
+            pane: 'pane_PlansdeauduParc_7',
+            onEachFeature: pop_PlansdeauduParc_7,
+            style: style_PlansdeauduParc_7_0,
+        });
+        bounds_group.addLayer(layer_PlansdeauduParc_7);
+        map.addLayer(layer_PlansdeauduParc_7);
+        function pop_Refuges_8(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Type</th>\
+                        <td>' + (feature.properties['Type'] !== null ? autolinker.link(feature.properties['Type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Propriétaire</th>\
+                        <td>' + (feature.properties['Propriete'] !== null ? autolinker.link(feature.properties['Propriete'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Refuge</th>\
+                        <td>' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Refuges_8_0() {
+            return {
+                pane: 'pane_Refuges_8',
+                shape: 'triangle',
+                radius: 5.6,
+                opacity: 1,
+                color: 'rgba(231,180,163,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(231,67,12,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Refuges_8');
+        map.getPane('pane_Refuges_8').style.zIndex = 408;
+        map.getPane('pane_Refuges_8').style['mix-blend-mode'] = 'normal';
+        var layer_Refuges_8 = new L.geoJson(json_Refuges_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Refuges_8',
+            layerName: 'layer_Refuges_8',
+            pane: 'pane_Refuges_8',
+            onEachFeature: pop_Refuges_8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_Refuges_8_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Refuges_8);
+        map.addLayer(layer_Refuges_8);
+        function pop_MaisonsduParcNationalaccueilpublic_9(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Maison du Parc</strong><br />' + (feature.properties['Nom'] !== null ? autolinker.link(feature.properties['Nom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_MaisonsduParcNationalaccueilpublic_9_0() {
+            return {
+                pane: 'pane_MaisonsduParcNationalaccueilpublic_9',
+                shape: 'triangle',
+                radius: 5.6,
+                opacity: 1,
+                color: 'rgba(223,198,108,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(188,153,28,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_MaisonsduParcNationalaccueilpublic_9');
+        map.getPane('pane_MaisonsduParcNationalaccueilpublic_9').style.zIndex = 409;
+        map.getPane('pane_MaisonsduParcNationalaccueilpublic_9').style['mix-blend-mode'] = 'normal';
+        var layer_MaisonsduParcNationalaccueilpublic_9 = new L.geoJson(json_MaisonsduParcNationalaccueilpublic_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_MaisonsduParcNationalaccueilpublic_9',
+            layerName: 'layer_MaisonsduParcNationalaccueilpublic_9',
+            pane: 'pane_MaisonsduParcNationalaccueilpublic_9',
+            onEachFeature: pop_MaisonsduParcNationalaccueilpublic_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_MaisonsduParcNationalaccueilpublic_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_MaisonsduParcNationalaccueilpublic_9);
+        map.addLayer(layer_MaisonsduParcNationalaccueilpublic_9);
+        function pop_LimitesduParcNationaltouteszonesconfodues_10(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nom'] !== null ? autolinker.link(feature.properties['nom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_LimitesduParcNationaltouteszonesconfodues_10_0() {
+            return {
+                pane: 'pane_LimitesduParcNationaltouteszonesconfodues_10',
+                opacity: 1,
+                color: 'rgba(232,92,92,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 3.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_LimitesduParcNationaltouteszonesconfodues_10');
+        map.getPane('pane_LimitesduParcNationaltouteszonesconfodues_10').style.zIndex = 410;
+        map.getPane('pane_LimitesduParcNationaltouteszonesconfodues_10').style['mix-blend-mode'] = 'normal';
+        var layer_LimitesduParcNationaltouteszonesconfodues_10 = new L.geoJson(json_LimitesduParcNationaltouteszonesconfodues_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_LimitesduParcNationaltouteszonesconfodues_10',
+            layerName: 'layer_LimitesduParcNationaltouteszonesconfodues_10',
+            pane: 'pane_LimitesduParcNationaltouteszonesconfodues_10',
+            onEachFeature: pop_LimitesduParcNationaltouteszonesconfodues_10,
+            style: style_LimitesduParcNationaltouteszonesconfodues_10_0,
+        });
+        bounds_group.addLayer(layer_LimitesduParcNationaltouteszonesconfodues_10);
+        map.addLayer(layer_LimitesduParcNationaltouteszonesconfodues_10);
+            var title = new L.Control();
+            title.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info');
+                this.update();
+                return this._div;
+            };
+            title.update = function () {
+                this._div.innerHTML = '<h2>Cartographie du Parc National des Pyrénées</h2>';
+            };
+            title.addTo(map);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/LimitesduParcNationaltouteszonesconfodues_10.png" /> Limites du Parc National (toutes zones confodues)': layer_LimitesduParcNationaltouteszonesconfodues_10,'<img src="legend/MaisonsduParcNationalaccueilpublic_9.png" /> Maisons du Parc National (accueil public)': layer_MaisonsduParcNationalaccueilpublic_9,'<img src="legend/Refuges_8.png" /> Refuges': layer_Refuges_8,'<img src="legend/PlansdeauduParc_7.png" /> Plans d\'eau du Parc': layer_PlansdeauduParc_7,'<img src="legend/SecteursduParcNational_6.png" /> Secteurs du Parc National': layer_SecteursduParcNational_6,'<img src="legend/Principauxsentiersderandonnes_5.png" /> Principaux sentiers de randonnées': layer_Principauxsentiersderandonnes_5,'<img src="legend/ZonecoeurduParcNational_4.png" /> Zone coeur du Parc National': layer_ZonecoeurduParcNational_4,'<img src="legend/ZonedahsionduParcNational_3.png" /> Zone d\'ahésion du Parc National': layer_ZonedahsionduParcNational_3,'<img src="legend/Zoneoptimaledadhsion_2.png" /> Zone optimale d\'adhésion': layer_Zoneoptimaledadhsion_2,"Fond de carte - Google Satellite": layer_FonddecarteGoogleSatellite_1,"OpenStreetMap": layer_OpenStreetMap_0,}).addTo(map);
+        setBounds();
+        var i = 0;
+        layer_SecteursduParcNational_6.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Nom'] !== null?String('<div style="color: #323232; font-size: 10pt; font-weight: bold; font-family: \'Roboto\', sans-serif;">' + layer.feature.properties['Nom']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_SecteursduParcNational_6'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"id": "int","ID": "str","IDPNP": "str","TOPONYME": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+        var i = 0;
+        layer_SecteursduParcNational_6.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Nom'] !== null?String('<div style="color: #323232; font-size: 10pt; font-weight: bold; font-family: \'Roboto\', sans-serif;">' + layer.feature.properties['Nom']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_SecteursduParcNational_6'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_id = document.createElement("div");
+            div_id.id = "div_id";
+            div_id.className = "slider";
+            document.getElementById("menu").appendChild(div_id);
+            var lab_id = document.createElement('div');
+            lab_id.innerHTML  = 'id: <span id="val_id"></span>';
+            lab_id.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_id);
+            var reset_id = document.createElement('div');
+            reset_id.innerHTML = 'clear filter';
+            reset_id.className = 'filterlabel';
+            lab_id.className = 'filterlabel';
+            reset_id.onclick = function() {
+                sel_id.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_id);
+            var sel_id = document.getElementById('div_id');
+            noUiSlider.create(sel_id, {
+                connect: true,
+                start: [1, 2],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 1,
+                max: 2
+                }
+            });
+            sel_id.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_id = document.getElementById('val_id');
+            val_id.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_ID = document.createElement('div');
+            div_ID.id = "div_ID";
+            div_ID.className= "filterselect";
+            document.getElementById("menu").appendChild(div_ID);
+            sel_ID = document.createElement('select');
+            sel_ID.multiple = true;
+            sel_ID.size = 10;
+            sel_ID.id = "sel_ID";
+            var ID_options_str = "<option value='' unselected></option>";
+            sel_ID.onchange = function(){filterFunc()};
+            ID_options_str  += '<option value="AOAPNP">AOAPNP</option>';
+            ID_options_str  += '<option value="AS">AS</option>';
+            ID_options_str  += '<option value="AU">AU</option>';
+            ID_options_str  += '<option value="AZ">AZ</option>';
+            ID_options_str  += '<option value="CA">CA</option>';
+            ID_options_str  += '<option value="LU">LU</option>';
+            ID_options_str  += '<option value="OS">OS</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000025032245">PLANDEAU0000000025032245</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000025032407">PLANDEAU0000000025032407</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000025032429">PLANDEAU0000000025032429</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000025032468">PLANDEAU0000000025032468</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000025032475">PLANDEAU0000000025032475</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000025032487">PLANDEAU0000000025032487</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241531">PLANDEAU0000000042241531</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241615">PLANDEAU0000000042241615</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241728">PLANDEAU0000000042241728</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241777">PLANDEAU0000000042241777</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241778">PLANDEAU0000000042241778</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241783">PLANDEAU0000000042241783</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241793">PLANDEAU0000000042241793</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241795">PLANDEAU0000000042241795</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241798">PLANDEAU0000000042241798</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241867">PLANDEAU0000000042241867</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241870">PLANDEAU0000000042241870</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241875">PLANDEAU0000000042241875</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241876">PLANDEAU0000000042241876</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241912">PLANDEAU0000000042241912</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241937">PLANDEAU0000000042241937</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241938">PLANDEAU0000000042241938</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241943">PLANDEAU0000000042241943</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241946">PLANDEAU0000000042241946</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042241999">PLANDEAU0000000042241999</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242030">PLANDEAU0000000042242030</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242056">PLANDEAU0000000042242056</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242070">PLANDEAU0000000042242070</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242073">PLANDEAU0000000042242073</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242076">PLANDEAU0000000042242076</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242078">PLANDEAU0000000042242078</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242094">PLANDEAU0000000042242094</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242095">PLANDEAU0000000042242095</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242110">PLANDEAU0000000042242110</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242114">PLANDEAU0000000042242114</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242115">PLANDEAU0000000042242115</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242116">PLANDEAU0000000042242116</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242152">PLANDEAU0000000042242152</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242156">PLANDEAU0000000042242156</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242157">PLANDEAU0000000042242157</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242162">PLANDEAU0000000042242162</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000042242166">PLANDEAU0000000042242166</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000225311279">PLANDEAU0000000225311279</option>';
+            ID_options_str  += '<option value="PLANDEAU0000000300845771">PLANDEAU0000000300845771</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783008">PLANDEAU0000002000783008</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783020">PLANDEAU0000002000783020</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783031">PLANDEAU0000002000783031</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783035">PLANDEAU0000002000783035</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783036">PLANDEAU0000002000783036</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783039">PLANDEAU0000002000783039</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783040">PLANDEAU0000002000783040</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783042">PLANDEAU0000002000783042</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783043">PLANDEAU0000002000783043</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783044">PLANDEAU0000002000783044</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783045">PLANDEAU0000002000783045</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783046">PLANDEAU0000002000783046</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783048">PLANDEAU0000002000783048</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783049">PLANDEAU0000002000783049</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783050">PLANDEAU0000002000783050</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783051">PLANDEAU0000002000783051</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783053">PLANDEAU0000002000783053</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783063">PLANDEAU0000002000783063</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783064">PLANDEAU0000002000783064</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783065">PLANDEAU0000002000783065</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783066">PLANDEAU0000002000783066</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783078">PLANDEAU0000002000783078</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783079">PLANDEAU0000002000783079</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783081">PLANDEAU0000002000783081</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783082">PLANDEAU0000002000783082</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783083">PLANDEAU0000002000783083</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783084">PLANDEAU0000002000783084</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783085">PLANDEAU0000002000783085</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783086">PLANDEAU0000002000783086</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783087">PLANDEAU0000002000783087</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783090">PLANDEAU0000002000783090</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783091">PLANDEAU0000002000783091</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783092">PLANDEAU0000002000783092</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783093">PLANDEAU0000002000783093</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783094">PLANDEAU0000002000783094</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783095">PLANDEAU0000002000783095</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783096">PLANDEAU0000002000783096</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783098">PLANDEAU0000002000783098</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783117">PLANDEAU0000002000783117</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783933">PLANDEAU0000002000783933</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783935">PLANDEAU0000002000783935</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783937">PLANDEAU0000002000783937</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783939">PLANDEAU0000002000783939</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783940">PLANDEAU0000002000783940</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783941">PLANDEAU0000002000783941</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783942">PLANDEAU0000002000783942</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783943">PLANDEAU0000002000783943</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783944">PLANDEAU0000002000783944</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783945">PLANDEAU0000002000783945</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783946">PLANDEAU0000002000783946</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783948">PLANDEAU0000002000783948</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783949">PLANDEAU0000002000783949</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783950">PLANDEAU0000002000783950</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783951">PLANDEAU0000002000783951</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783952">PLANDEAU0000002000783952</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783953">PLANDEAU0000002000783953</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783954">PLANDEAU0000002000783954</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783957">PLANDEAU0000002000783957</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783960">PLANDEAU0000002000783960</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783961">PLANDEAU0000002000783961</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783962">PLANDEAU0000002000783962</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783963">PLANDEAU0000002000783963</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783964">PLANDEAU0000002000783964</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783965">PLANDEAU0000002000783965</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783966">PLANDEAU0000002000783966</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783967">PLANDEAU0000002000783967</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783969">PLANDEAU0000002000783969</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783970">PLANDEAU0000002000783970</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783971">PLANDEAU0000002000783971</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783972">PLANDEAU0000002000783972</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783973">PLANDEAU0000002000783973</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783975">PLANDEAU0000002000783975</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783976">PLANDEAU0000002000783976</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783977">PLANDEAU0000002000783977</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783978">PLANDEAU0000002000783978</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783984">PLANDEAU0000002000783984</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783987">PLANDEAU0000002000783987</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783988">PLANDEAU0000002000783988</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783990">PLANDEAU0000002000783990</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783991">PLANDEAU0000002000783991</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783992">PLANDEAU0000002000783992</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783994">PLANDEAU0000002000783994</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783995">PLANDEAU0000002000783995</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783996">PLANDEAU0000002000783996</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783997">PLANDEAU0000002000783997</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000783998">PLANDEAU0000002000783998</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784000">PLANDEAU0000002000784000</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784002">PLANDEAU0000002000784002</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784003">PLANDEAU0000002000784003</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784004">PLANDEAU0000002000784004</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784005">PLANDEAU0000002000784005</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784006">PLANDEAU0000002000784006</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784007">PLANDEAU0000002000784007</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784008">PLANDEAU0000002000784008</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784012">PLANDEAU0000002000784012</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784013">PLANDEAU0000002000784013</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784014">PLANDEAU0000002000784014</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784016">PLANDEAU0000002000784016</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784017">PLANDEAU0000002000784017</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784018">PLANDEAU0000002000784018</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784019">PLANDEAU0000002000784019</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784020">PLANDEAU0000002000784020</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784021">PLANDEAU0000002000784021</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784022">PLANDEAU0000002000784022</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784023">PLANDEAU0000002000784023</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784024">PLANDEAU0000002000784024</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784025">PLANDEAU0000002000784025</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784026">PLANDEAU0000002000784026</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784027">PLANDEAU0000002000784027</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784028">PLANDEAU0000002000784028</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784030">PLANDEAU0000002000784030</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784031">PLANDEAU0000002000784031</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784032">PLANDEAU0000002000784032</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784033">PLANDEAU0000002000784033</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784034">PLANDEAU0000002000784034</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784035">PLANDEAU0000002000784035</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784036">PLANDEAU0000002000784036</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784037">PLANDEAU0000002000784037</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784039">PLANDEAU0000002000784039</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784040">PLANDEAU0000002000784040</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784041">PLANDEAU0000002000784041</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784042">PLANDEAU0000002000784042</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784043">PLANDEAU0000002000784043</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784046">PLANDEAU0000002000784046</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784047">PLANDEAU0000002000784047</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784048">PLANDEAU0000002000784048</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784050">PLANDEAU0000002000784050</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784052">PLANDEAU0000002000784052</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784053">PLANDEAU0000002000784053</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784054">PLANDEAU0000002000784054</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784057">PLANDEAU0000002000784057</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784058">PLANDEAU0000002000784058</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784059">PLANDEAU0000002000784059</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784060">PLANDEAU0000002000784060</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784061">PLANDEAU0000002000784061</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784062">PLANDEAU0000002000784062</option>';
+            ID_options_str  += '<option value="PLANDEAU0000002000784063">PLANDEAU0000002000784063</option>';
+            sel_ID.innerHTML = ID_options_str;
+            div_ID.appendChild(sel_ID);
+            var lab_ID = document.createElement('div');
+            lab_ID.innerHTML = 'ID';
+            lab_ID.className = 'filterlabel';
+            div_ID.appendChild(lab_ID);
+            var reset_ID = document.createElement('div');
+            reset_ID.innerHTML = 'clear filter';
+            reset_ID.className = 'filterlabel';
+            reset_ID.onclick = function() {
+                var options = document.getElementById("sel_ID").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_ID.appendChild(reset_ID);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_IDPNP = document.createElement('div');
+            div_IDPNP.id = "div_IDPNP";
+            div_IDPNP.className= "filterselect";
+            document.getElementById("menu").appendChild(div_IDPNP);
+            sel_IDPNP = document.createElement('select');
+            sel_IDPNP.multiple = true;
+            sel_IDPNP.size = 10;
+            sel_IDPNP.id = "sel_IDPNP";
+            var IDPNP_options_str = "<option value='' unselected></option>";
+            sel_IDPNP.onchange = function(){filterFunc()};
+            IDPNP_options_str  += '<option value="AS02">AS02</option>';
+            IDPNP_options_str  += '<option value="AS03">AS03</option>';
+            IDPNP_options_str  += '<option value="AS04">AS04</option>';
+            IDPNP_options_str  += '<option value="AS05">AS05</option>';
+            IDPNP_options_str  += '<option value="AS06">AS06</option>';
+            IDPNP_options_str  += '<option value="AS07">AS07</option>';
+            IDPNP_options_str  += '<option value="AS08">AS08</option>';
+            IDPNP_options_str  += '<option value="AS09">AS09</option>';
+            IDPNP_options_str  += '<option value="AS10">AS10</option>';
+            IDPNP_options_str  += '<option value="AS11">AS11</option>';
+            IDPNP_options_str  += '<option value="AS11b">AS11b</option>';
+            IDPNP_options_str  += '<option value="AS12">AS12</option>';
+            IDPNP_options_str  += '<option value="AS13">AS13</option>';
+            IDPNP_options_str  += '<option value="AS14">AS14</option>';
+            IDPNP_options_str  += '<option value="AS15">AS15</option>';
+            IDPNP_options_str  += '<option value="AS15b">AS15b</option>';
+            IDPNP_options_str  += '<option value="AS17">AS17</option>';
+            IDPNP_options_str  += '<option value="AS17b">AS17b</option>';
+            IDPNP_options_str  += '<option value="AS18">AS18</option>';
+            IDPNP_options_str  += '<option value="AS19">AS19</option>';
+            IDPNP_options_str  += '<option value="AU01">AU01</option>';
+            IDPNP_options_str  += '<option value="AU02">AU02</option>';
+            IDPNP_options_str  += '<option value="AU03">AU03</option>';
+            IDPNP_options_str  += '<option value="AU04">AU04</option>';
+            IDPNP_options_str  += '<option value="AU05">AU05</option>';
+            IDPNP_options_str  += '<option value="AU06">AU06</option>';
+            IDPNP_options_str  += '<option value="AU07">AU07</option>';
+            IDPNP_options_str  += '<option value="AU08">AU08</option>';
+            IDPNP_options_str  += '<option value="AZ01">AZ01</option>';
+            IDPNP_options_str  += '<option value="AZ02">AZ02</option>';
+            IDPNP_options_str  += '<option value="AZ03">AZ03</option>';
+            IDPNP_options_str  += '<option value="AZ04">AZ04</option>';
+            IDPNP_options_str  += '<option value="AZ04b">AZ04b</option>';
+            IDPNP_options_str  += '<option value="AZ04c">AZ04c</option>';
+            IDPNP_options_str  += '<option value="AZ05">AZ05</option>';
+            IDPNP_options_str  += '<option value="AZ05b">AZ05b</option>';
+            IDPNP_options_str  += '<option value="AZ05c">AZ05c</option>';
+            IDPNP_options_str  += '<option value="AZ06">AZ06</option>';
+            IDPNP_options_str  += '<option value="AZ07">AZ07</option>';
+            IDPNP_options_str  += '<option value="AZ08">AZ08</option>';
+            IDPNP_options_str  += '<option value="AZ09">AZ09</option>';
+            IDPNP_options_str  += '<option value="CA01">CA01</option>';
+            IDPNP_options_str  += '<option value="CA02">CA02</option>';
+            IDPNP_options_str  += '<option value="CA03">CA03</option>';
+            IDPNP_options_str  += '<option value="CA04">CA04</option>';
+            IDPNP_options_str  += '<option value="CA05">CA05</option>';
+            IDPNP_options_str  += '<option value="CA06">CA06</option>';
+            IDPNP_options_str  += '<option value="CA07">CA07</option>';
+            IDPNP_options_str  += '<option value="CA08">CA08</option>';
+            IDPNP_options_str  += '<option value="CA09">CA09</option>';
+            IDPNP_options_str  += '<option value="CA10">CA10</option>';
+            IDPNP_options_str  += '<option value="CA12">CA12</option>';
+            IDPNP_options_str  += '<option value="CA13">CA13</option>';
+            IDPNP_options_str  += '<option value="LU01">LU01</option>';
+            IDPNP_options_str  += '<option value="LU02">LU02</option>';
+            IDPNP_options_str  += '<option value="LU03">LU03</option>';
+            IDPNP_options_str  += '<option value="LU04">LU04</option>';
+            IDPNP_options_str  += '<option value="LU05">LU05</option>';
+            IDPNP_options_str  += '<option value="LU06">LU06</option>';
+            IDPNP_options_str  += '<option value="LU07">LU07</option>';
+            IDPNP_options_str  += '<option value="LU08">LU08</option>';
+            IDPNP_options_str  += '<option value="LU09">LU09</option>';
+            IDPNP_options_str  += '<option value="LU10">LU10</option>';
+            IDPNP_options_str  += '<option value="LU10b">LU10b</option>';
+            IDPNP_options_str  += '<option value="LU11">LU11</option>';
+            IDPNP_options_str  += '<option value="LU11B">LU11B</option>';
+            IDPNP_options_str  += '<option value="LU11c">LU11c</option>';
+            IDPNP_options_str  += '<option value="LU12">LU12</option>';
+            IDPNP_options_str  += '<option value="LU13">LU13</option>';
+            IDPNP_options_str  += '<option value="LU14">LU14</option>';
+            IDPNP_options_str  += '<option value="LU15">LU15</option>';
+            IDPNP_options_str  += '<option value="LU16">LU16</option>';
+            IDPNP_options_str  += '<option value="LU17">LU17</option>';
+            IDPNP_options_str  += '<option value="LU18">LU18</option>';
+            IDPNP_options_str  += '<option value="OS01">OS01</option>';
+            IDPNP_options_str  += '<option value="OS02">OS02</option>';
+            IDPNP_options_str  += '<option value="OS03">OS03</option>';
+            IDPNP_options_str  += '<option value="OS04">OS04</option>';
+            IDPNP_options_str  += '<option value="OS05">OS05</option>';
+            IDPNP_options_str  += '<option value="OS06">OS06</option>';
+            IDPNP_options_str  += '<option value="OS07">OS07</option>';
+            IDPNP_options_str  += '<option value="OS08">OS08</option>';
+            IDPNP_options_str  += '<option value="OS09">OS09</option>';
+            IDPNP_options_str  += '<option value="OS10">OS10</option>';
+            IDPNP_options_str  += '<option value="OS11">OS11</option>';
+            IDPNP_options_str  += '<option value="OS12">OS12</option>';
+            IDPNP_options_str  += '<option value="OS13">OS13</option>';
+            IDPNP_options_str  += '<option value="OS14">OS14</option>';
+            IDPNP_options_str  += '<option value="RNN01">RNN01</option>';
+            IDPNP_options_str  += '<option value="RNN02">RNN02</option>';
+            IDPNP_options_str  += '<option value="RNN03">RNN03</option>';
+            IDPNP_options_str  += '<option value="RNN04">RNN04</option>';
+            IDPNP_options_str  += '<option value="RNN05">RNN05</option>';
+            IDPNP_options_str  += '<option value="RNN06">RNN06</option>';
+            IDPNP_options_str  += '<option value="RNN07">RNN07</option>';
+            IDPNP_options_str  += '<option value="RNN08">RNN08</option>';
+            IDPNP_options_str  += '<option value="RNN09">RNN09</option>';
+            sel_IDPNP.innerHTML = IDPNP_options_str;
+            div_IDPNP.appendChild(sel_IDPNP);
+            var lab_IDPNP = document.createElement('div');
+            lab_IDPNP.innerHTML = 'IDPNP';
+            lab_IDPNP.className = 'filterlabel';
+            div_IDPNP.appendChild(lab_IDPNP);
+            var reset_IDPNP = document.createElement('div');
+            reset_IDPNP.innerHTML = 'clear filter';
+            reset_IDPNP.className = 'filterlabel';
+            reset_IDPNP.onclick = function() {
+                var options = document.getElementById("sel_IDPNP").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_IDPNP.appendChild(reset_IDPNP);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_TOPONYME = document.createElement('div');
+            div_TOPONYME.id = "div_TOPONYME";
+            div_TOPONYME.className= "filterselect";
+            document.getElementById("menu").appendChild(div_TOPONYME);
+            sel_TOPONYME = document.createElement('select');
+            sel_TOPONYME.multiple = true;
+            sel_TOPONYME.size = 10;
+            sel_TOPONYME.id = "sel_TOPONYME";
+            var TOPONYME_options_str = "<option value='' unselected></option>";
+            sel_TOPONYME.onchange = function(){filterFunc()};
+            TOPONYME_options_str  += '<option value="Couloir de Gaube">Couloir de Gaube</option>';
+            TOPONYME_options_str  += '<option value="Glacier d&apos;Aragon">Glacier d&apos;Aragon</option>';
+            TOPONYME_options_str  += '<option value="Glacier d&apos;Astazou">Glacier d&apos;Astazou</option>';
+            TOPONYME_options_str  += '<option value="Glacier d&apos;Ossoue">Glacier d&apos;Ossoue</option>';
+            TOPONYME_options_str  += '<option value="Glacier de Barroude">Glacier de Barroude</option>';
+            TOPONYME_options_str  += '<option value="Glacier de la Munia">Glacier de la Munia</option>';
+            TOPONYME_options_str  += '<option value="Glacier de las Néous">Glacier de las Néous</option>';
+            TOPONYME_options_str  += '<option value="Glacier des Gabiétous">Glacier des Gabiétous</option>';
+            TOPONYME_options_str  += '<option value="Glacier des Oulettes">Glacier des Oulettes</option>';
+            TOPONYME_options_str  += '<option value="Glacier du Montferrat">Glacier du Montferrat</option>';
+            TOPONYME_options_str  += '<option value="Glacier du Pabat">Glacier du Pabat</option>';
+            TOPONYME_options_str  += '<option value="Glacier du Petit Vignemale">Glacier du Petit Vignemale</option>';
+            TOPONYME_options_str  += '<option value="Glacier du Taillon">Glacier du Taillon</option>';
+            TOPONYME_options_str  += '<option value="Glaciers de Pailla">Glaciers de Pailla</option>';
+            TOPONYME_options_str  += '<option value="Gourg de Cap de Long">Gourg de Cap de Long</option>';
+            TOPONYME_options_str  += '<option value="Gourguet de Madaméte ou Gourg de Rabas">Gourguet de Madaméte ou Gourg de Rabas</option>';
+            TOPONYME_options_str  += '<option value="Lac Arrédoun">Lac Arrédoun</option>';
+            TOPONYME_options_str  += '<option value="Lac Bersau">Lac Bersau</option>';
+            TOPONYME_options_str  += '<option value="Lac Blanc">Lac Blanc</option>';
+            TOPONYME_options_str  += '<option value="Lac Bleu">Lac Bleu</option>';
+            TOPONYME_options_str  += '<option value="Lac Castérau">Lac Castérau</option>';
+            TOPONYME_options_str  += '<option value="Lac Couy">Lac Couy</option>';
+            TOPONYME_options_str  += '<option value="Lac Dera Yunco ou de la Jonquère">Lac Dera Yunco ou de la Jonquère</option>';
+            TOPONYME_options_str  += '<option value="Lac Ducrest">Lac Ducrest</option>';
+            TOPONYME_options_str  += '<option value="Lac Estagnol">Lac Estagnol</option>';
+            TOPONYME_options_str  += '<option value="Lac Estelat Inférieur">Lac Estelat Inférieur</option>';
+            TOPONYME_options_str  += '<option value="Lac Estelat Supérieur">Lac Estelat Supérieur</option>';
+            TOPONYME_options_str  += '<option value="Lac Gentau">Lac Gentau</option>';
+            TOPONYME_options_str  += '<option value="Lac Glacé">Lac Glacé</option>';
+            TOPONYME_options_str  += '<option value="Lac Grand">Lac Grand</option>';
+            TOPONYME_options_str  += '<option value="Lac Inférieur">Lac Inférieur</option>';
+            TOPONYME_options_str  += '<option value="Lac Long">Lac Long</option>';
+            TOPONYME_options_str  += '<option value="Lac Meillon">Lac Meillon</option>';
+            TOPONYME_options_str  += '<option value="Lac Noir">Lac Noir</option>';
+            TOPONYME_options_str  += '<option value="Lac Nère">Lac Nère</option>';
+            TOPONYME_options_str  += '<option value="Lac Paradis">Lac Paradis</option>';
+            TOPONYME_options_str  += '<option value="Lac Roumassot">Lac Roumassot</option>';
+            TOPONYME_options_str  += '<option value="Lac Supérieur">Lac Supérieur</option>';
+            TOPONYME_options_str  += '<option value="Lac Tourrat">Lac Tourrat</option>';
+            TOPONYME_options_str  += '<option value="Lac Vert">Lac Vert</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Agalops">Lac d&apos;Agalops</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Anglade">Lac d&apos;Anglade</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Anglas">Lac d&apos;Anglas</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Anglus">Lac d&apos;Anglus</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Antarrouyes">Lac d&apos;Antarrouyes</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Aouda">Lac d&apos;Aouda</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Arizes">Lac d&apos;Arizes</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Arlet">Lac d&apos;Arlet</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Arratille">Lac d&apos;Arratille</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Arrious">Lac d&apos;Arrious</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Artouste">Lac d&apos;Artouste</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Aspé">Lac d&apos;Aspé</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Astazou">Lac d&apos;Astazou</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Aubert">Lac d&apos;Aubert</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Aule">Lac d&apos;Aule</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Aumar">Lac d&apos;Aumar</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Aygues Cluses">Lac d&apos;Aygues Cluses</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Er">Lac d&apos;Er</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Estaing">Lac d&apos;Estaing</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Estom">Lac d&apos;Estom</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Ilhéou ou Lac Bleu">Lac d&apos;Ilhéou ou Lac Bleu</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Isabe">Lac d&apos;Isabe</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Isaby">Lac d&apos;Isaby</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Oncet">Lac d&apos;Oncet</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Orédon">Lac d&apos;Orédon</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Ourrec">Lac d&apos;Ourrec</option>';
+            TOPONYME_options_str  += '<option value="Lac d&apos;Uzious">Lac d&apos;Uzious</option>';
+            TOPONYME_options_str  += '<option value="Lac de Badet">Lac de Badet</option>';
+            TOPONYME_options_str  += '<option value="Lac de Bassia">Lac de Bassia</option>';
+            TOPONYME_options_str  += '<option value="Lac de Bassias ou de Couey Seque">Lac de Bassias ou de Couey Seque</option>';
+            TOPONYME_options_str  += '<option value="Lac de Bastampe">Lac de Bastampe</option>';
+            TOPONYME_options_str  += '<option value="Lac de Bastan ou de Port Bielh">Lac de Bastan ou de Port Bielh</option>';
+            TOPONYME_options_str  += '<option value="Lac de Batbielh">Lac de Batbielh</option>';
+            TOPONYME_options_str  += '<option value="Lac de Bernat Barrau">Lac de Bernat Barrau</option>';
+            TOPONYME_options_str  += '<option value="Lac de Bious Artigues">Lac de Bious Artigues</option>';
+            TOPONYME_options_str  += '<option value="Lac de Bugarret">Lac de Bugarret</option>';
+            TOPONYME_options_str  += '<option value="Lac de Caderolles ou de la Mane">Lac de Caderolles ou de la Mane</option>';
+            TOPONYME_options_str  += '<option value="Lac de Cap de Long">Lac de Cap de Long</option>';
+            TOPONYME_options_str  += '<option value="Lac de Casdabat">Lac de Casdabat</option>';
+            TOPONYME_options_str  += '<option value="Lac de Catchet">Lac de Catchet</option>';
+            TOPONYME_options_str  += '<option value="Lac de Cestrède">Lac de Cestrède</option>';
+            TOPONYME_options_str  += '<option value="Lac de Cloutou">Lac de Cloutou</option>';
+            TOPONYME_options_str  += '<option value="Lac de Coueyla Gran">Lac de Coueyla Gran</option>';
+            TOPONYME_options_str  += '<option value="Lac de Coume Escure">Lac de Coume Escure</option>';
+            TOPONYME_options_str  += '<option value="Lac de Couyela det Mey">Lac de Couyela det Mey</option>';
+            TOPONYME_options_str  += '<option value="Lac de Crabounouse">Lac de Crabounouse</option>';
+            TOPONYME_options_str  += '<option value="Lac de Cul des Gourgs">Lac de Cul des Gourgs</option>';
+            TOPONYME_options_str  += '<option value="Lac de Fabrèges">Lac de Fabrèges</option>';
+            TOPONYME_options_str  += '<option value="Lac de Gaube">Lac de Gaube</option>';
+            TOPONYME_options_str  += '<option value="Lac de Gourguet">Lac de Gourguet</option>';
+            TOPONYME_options_str  += '<option value="Lac de Gréziolles">Lac de Gréziolles</option>';
+            TOPONYME_options_str  += '<option value="Lac de Hount Hérède">Lac de Hount Hérède</option>';
+            TOPONYME_options_str  += '<option value="Lac de Héchempy">Lac de Héchempy</option>';
+            TOPONYME_options_str  += '<option value="Lac de Labachotte">Lac de Labachotte</option>';
+            TOPONYME_options_str  += '<option value="Lac de Labas">Lac de Labas</option>';
+            TOPONYME_options_str  += '<option value="Lac de Lassiédouat">Lac de Lassiédouat</option>';
+            TOPONYME_options_str  += '<option value="Lac de Lhurs">Lac de Lhurs</option>';
+            TOPONYME_options_str  += '<option value="Lac de Litouèse">Lac de Litouèse</option>';
+            TOPONYME_options_str  += '<option value="Lac de Malh Arrouy">Lac de Malh Arrouy</option>';
+            TOPONYME_options_str  += '<option value="Lac de Maucapéra">Lac de Maucapéra</option>';
+            TOPONYME_options_str  += '<option value="Lac de Migouélou">Lac de Migouélou</option>';
+            TOPONYME_options_str  += '<option value="Lac de Montarrouye">Lac de Montarrouye</option>';
+            TOPONYME_options_str  += '<option value="Lac de Mounicot">Lac de Mounicot</option>';
+            TOPONYME_options_str  += '<option value="Lac de Payolle">Lac de Payolle</option>';
+            TOPONYME_options_str  += '<option value="Lac de Peyreget">Lac de Peyreget</option>';
+            TOPONYME_options_str  += '<option value="Lac de Pombie">Lac de Pombie</option>';
+            TOPONYME_options_str  += '<option value="Lac de Pouey Laun">Lac de Pouey Laun</option>';
+            TOPONYME_options_str  += '<option value="Lac de Pène">Lac de Pène</option>';
+            TOPONYME_options_str  += '<option value="Lac de Rabiet">Lac de Rabiet</option>';
+            TOPONYME_options_str  += '<option value="Lac de Soum">Lac de Soum</option>';
+            TOPONYME_options_str  += '<option value="Lac de Suyen">Lac de Suyen</option>';
+            TOPONYME_options_str  += '<option value="Lac de Tracens">Lac de Tracens</option>';
+            TOPONYME_options_str  += '<option value="Lac de l&apos;I">Lac de l&apos;I</option>';
+            TOPONYME_options_str  += '<option value="Lac de l&apos;Oule">Lac de l&apos;Oule</option>';
+            TOPONYME_options_str  += '<option value="Lac de l&apos;Ours">Lac de l&apos;Ours</option>';
+            TOPONYME_options_str  += '<option value="Lac de l&apos;Île">Lac de l&apos;Île</option>';
+            TOPONYME_options_str  += '<option value="Lac de la Badéte">Lac de la Badéte</option>';
+            TOPONYME_options_str  += '<option value="Lac de la Fache">Lac de la Fache</option>';
+            TOPONYME_options_str  += '<option value="Lac de la Glère">Lac de la Glère</option>';
+            TOPONYME_options_str  += '<option value="Lac de la Hourquette">Lac de la Hourquette</option>';
+            TOPONYME_options_str  += '<option value="Lac de la Lahude">Lac de la Lahude</option>';
+            TOPONYME_options_str  += '<option value="Lac de la Manche">Lac de la Manche</option>';
+            TOPONYME_options_str  += '<option value="Lac de la Mourèle">Lac de la Mourèle</option>';
+            TOPONYME_options_str  += '<option value="Lac des Espécières ou de Luhos">Lac des Espécières ou de Luhos</option>';
+            TOPONYME_options_str  += '<option value="Lac des Gaves">Lac des Gaves</option>';
+            TOPONYME_options_str  += '<option value="Lac des Gentianes">Lac des Gentianes</option>';
+            TOPONYME_options_str  += '<option value="Lac des Gloriettes">Lac des Gloriettes</option>';
+            TOPONYME_options_str  += '<option value="Lac des Guits">Lac des Guits</option>';
+            TOPONYME_options_str  += '<option value="Lac des Oulettes d&apos;Estom Soubiran">Lac des Oulettes d&apos;Estom Soubiran</option>';
+            TOPONYME_options_str  += '<option value="Lac des Touest">Lac des Touest</option>';
+            TOPONYME_options_str  += '<option value="Lac det Mail">Lac det Mail</option>';
+            TOPONYME_options_str  += '<option value="Lac dets Coubous">Lac dets Coubous</option>';
+            TOPONYME_options_str  += '<option value="Lac du Barbat">Lac du Barbat</option>';
+            TOPONYME_options_str  += '<option value="Lac du Campana">Lac du Campana</option>';
+            TOPONYME_options_str  += '<option value="Lac du Chabarrou">Lac du Chabarrou</option>';
+            TOPONYME_options_str  += '<option value="Lac du Col d&apos;Arratille">Lac du Col d&apos;Arratille</option>';
+            TOPONYME_options_str  += '<option value="Lac du Hourat">Lac du Hourat</option>';
+            TOPONYME_options_str  += '<option value="Lac du Lavedan">Lac du Lavedan</option>';
+            TOPONYME_options_str  += '<option value="Lac du Lurien">Lac du Lurien</option>';
+            TOPONYME_options_str  += '<option value="Lac du Miey">Lac du Miey</option>';
+            TOPONYME_options_str  += '<option value="Lac du Montagnon">Lac du Montagnon</option>';
+            TOPONYME_options_str  += '<option value="Lac du Palas">Lac du Palas</option>';
+            TOPONYME_options_str  += '<option value="Lac du Pe d&apos;Estibere ou du Cascaret">Lac du Pe d&apos;Estibere ou du Cascaret</option>';
+            TOPONYME_options_str  += '<option value="Lac du Peilhou">Lac du Peilhou</option>';
+            TOPONYME_options_str  += '<option value="Lac du Pic Arrouy">Lac du Pic Arrouy</option>';
+            TOPONYME_options_str  += '<option value="Lac du Plaa de Prat">Lac du Plaa de Prat</option>';
+            TOPONYME_options_str  += '<option value="Lac du Pourtet">Lac du Pourtet</option>';
+            TOPONYME_options_str  += '<option value="Lac du Tech">Lac du Tech</option>';
+            TOPONYME_options_str  += '<option value="Lacs Verts">Lacs Verts</option>';
+            TOPONYME_options_str  += '<option value="Lacs d&apos;Ardiden">Lacs d&apos;Ardiden</option>';
+            TOPONYME_options_str  += '<option value="Lacs d&apos;Arrémoulit">Lacs d&apos;Arrémoulit</option>';
+            TOPONYME_options_str  += '<option value="Lacs d&apos;Estibe Aute">Lacs d&apos;Estibe Aute</option>';
+            TOPONYME_options_str  += '<option value="Lacs d&apos;Estibère">Lacs d&apos;Estibère</option>';
+            TOPONYME_options_str  += '<option value="Lacs d&apos;Opale">Lacs d&apos;Opale</option>';
+            TOPONYME_options_str  += '<option value="Lacs d&apos;Ormièlas">Lacs d&apos;Ormièlas</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Barroude">Lacs de Barroude</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Bassia">Lacs de Bassia</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Bastan">Lacs de Bastan</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Bastanet">Lacs de Bastanet</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Batboucou">Lacs de Batboucou</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Batcrabère">Lacs de Batcrabère</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Cambalès">Lacs de Cambalès</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Carnau">Lacs de Carnau</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Consaterre">Lacs de Consaterre</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Houns de Hèche">Lacs de Houns de Hèche</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Louesque">Lacs de Louesque</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Madaméte">Lacs de Madaméte</option>';
+            TOPONYME_options_str  += '<option value="Lacs de Remoulis">Lacs de Remoulis</option>';
+            TOPONYME_options_str  += '<option value="Lacs de l&apos;Embarrat">Lacs de l&apos;Embarrat</option>';
+            TOPONYME_options_str  += '<option value="Lacs de la Fache">Lacs de la Fache</option>';
+            TOPONYME_options_str  += '<option value="Lacs des Aires">Lacs des Aires</option>';
+            TOPONYME_options_str  += '<option value="Lacs du Couyèou Bielh">Lacs du Couyèou Bielh</option>';
+            TOPONYME_options_str  += '<option value="Lacs du Milieu">Lacs du Milieu</option>';
+            TOPONYME_options_str  += '<option value="Laquet de Coste Oueillère">Laquet de Coste Oueillère</option>';
+            TOPONYME_options_str  += '<option value="Laquets d&apos;Estibe Aute">Laquets d&apos;Estibe Aute</option>';
+            TOPONYME_options_str  += '<option value="Laquets de Port Bielh">Laquets de Port Bielh</option>';
+            TOPONYME_options_str  += '<option value="Laquette de Gréziolles">Laquette de Gréziolles</option>';
+            TOPONYME_options_str  += '<option value="Petit Lac du Col">Petit Lac du Col</option>';
+            TOPONYME_options_str  += '<option value="Retenue Merville">Retenue Merville</option>';
+            TOPONYME_options_str  += '<option value="Réservoir des Laquets">Réservoir des Laquets</option>';
+            TOPONYME_options_str  += '<option value="les Laquettes">les Laquettes</option>';
+            sel_TOPONYME.innerHTML = TOPONYME_options_str;
+            div_TOPONYME.appendChild(sel_TOPONYME);
+            var lab_TOPONYME = document.createElement('div');
+            lab_TOPONYME.innerHTML = 'TOPONYME';
+            lab_TOPONYME.className = 'filterlabel';
+            div_TOPONYME.appendChild(lab_TOPONYME);
+            var reset_TOPONYME = document.createElement('div');
+            reset_TOPONYME.innerHTML = 'clear filter';
+            reset_TOPONYME.className = 'filterlabel';
+            reset_TOPONYME.onclick = function() {
+                var options = document.getElementById("sel_TOPONYME").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_TOPONYME.appendChild(reset_TOPONYME);
+        resetLabels([layer_SecteursduParcNational_6]);
+        map.on("zoomend", function(){
+            resetLabels([layer_SecteursduParcNational_6]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_SecteursduParcNational_6]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_SecteursduParcNational_6]);
+        });
+        </script>
+    </body>
+</html>
